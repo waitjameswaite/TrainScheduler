@@ -3,6 +3,7 @@ input {
 }
 
 .jumbotron {
+	padding-top: 6em;
     background-color: #337ab7;
-    color:white;
+    color: white;
 }
