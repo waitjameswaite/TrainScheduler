@@ -8,41 +8,23 @@ var config = {
     messagingSenderId: "981570038123"
   };
 
-  firebase.initializeApp(config);
+firebase.initializeApp(config);
 
-  var database = firebase.database();
+var database = firebase.database();
 
+var trainName = "";
+var trainDestination = "";
+var initialTime = 0;
+var trainFrequency = 0;
 
-  var initialLoad = true;
-
-  var newTableData = function(snapshot){
-  	var trainName = snapshot.val().trainName;
-  	var trainDestination = snapshot.val().trainDestination;
-  	var initialTime = snapshot.val().initialTime;
-  	var trainFrequency = snapshot.val().trainFrequency;
-
-  	var today = moment();
-  	var inputDate = moment(date, "DD/MM/YY");
-  	var r = $("<tr>");
-  	var dataValues = [trainName, trainDestination, initialTime, trainFrequency];
-  	var freq = "";
-
-  	for (var i = 0; i < 3; i++) {
-  		var data = $("<td>");
-  		data.html(dataValues[i]);
-  		r.append(data);
-  	}
-
-  	$("#table-body").append(r);
-
-  }
 
   $("submit").on("click", function(event) {
+  	event.preventDefault();
 
-  	var trainName = $("#new-name").val().trim();
-  	var trainDestination = $("#new-destination").val().trim();
-  	var initialTime = $("#new-time").val().trim();
-  	var trainFrequency = $("#new-frequency").val().trim();
+  	trainName = $("#new-name").val().trim();
+  	trainDestination = $("#new-destination").val().trim();
+  	initialTime = $("#new-time").val().trim();
+  	trainFrequency = $("#new-frequency").val().trim();
 
   	database.ref().push({
   		trainName: trainName,
@@ -50,12 +32,23 @@ var config = {
   		initialTime: initialTime,
   		trainFrequency: trainFrequency,
   		dateAdded: firevase.database.ServerValue.TIMESTAMP
-  	})
+  	});
+  });
 
-  })
+  database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
 
-  database.ref().on("child_added", function(snapshot) {
-  	console.log(snapshot.val());
-  	console.log("I'm making the table now!");
-  	newTableData(snapshot);
-  })
+  	var sv = snapshot.val();
+
+  	console.log(sv.trainName);
+  	console.log(sv.trainDestination);
+  	console.log(sv.initialTime);
+  	console.log(sv.trainFrequency);
+
+  	// $("#").html(sv.trainName);
+  	// $("#").html(sv.trainDestination);
+  	// $("#").html(sv.initialTime);
+  	// $("#").html(sv.trainFrequency);	
+
+  }, function(errorObject) {
+  	console.log("Errors handled: " + errorObject.code);
+  });
