@@ -39,6 +39,14 @@ $("#submit").on("click", function(event) {
 
 });
 
+database.ref().on("child_added", function(childSnapshot) {
+
+	$("#table-body").append("<tr><td>" + childSnapshot.val().trainName + "</td><td>" + childSnapshot.val().trainDestination + "</td><td>" + childSnapshot.val().initialTime + "</td><td>" + childSnapshot.val().trainFrequency + "</td></tr>");
+
+}, function(errorObject) {
+	console.log("Errors handled: " + errorObject.code);
+});
+
 // Logs most recent Firebase push, running the time math, and appending data to table
 database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
 
